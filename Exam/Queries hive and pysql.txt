@@ -1,0 +1,138 @@
+Name:Vishwajeet Jagtap
+RollNo:230340325079
+
+
+######################### Hive ###########################
+
+
+1)Which airports have the highest altitude ?
+select airport_id,name,city,country,altitude from airport order by altitude desc limit 1; 
+
+
+2)How many routes are operated by active airlines from the United States ?
+select distinct a.name from airlines a join routes r 
+on  a.airline_id = r.airline_id join airport ar1 on ar1.airport_id = src_airport_id
+join
+airport ar2
+on
+ar2.airport_id = dest_airport_id where trim(upper(ar1.country)) = "UNITED STATES" or trim(upper(ar2.country)) = "UNITED STATES";
+
+3)Which airlines operate routes that have less than 3 stops number of stops
+top 10 alphabetically?
+
+select air.airline_id,air.name,country,r.stops from airlines as air inner join routes r on air.airline_id = r.airline_id where stops<3 ordre by air.name limit 10;
+
+4)How many airlines have a specific IATA code ‘W9’?
+Select count(distinct(airline_id)) from airlines where iata='W9';
+
+5)Find the airlines that operate routes with a specific equipment as ‘AN4’
+and codeshare enabled.
+Select distinct(a.name) from airlines a join routes  r on a.airline_id=r.airline_id where equipment='AN4' and codeshare='Y';
+
+
+
+
+
+######################### Pysql ###########################
+
+from pyspark.sql.types import StructType, StringType, IntegerType, DoubleType, LongType
+airlschema = StructType().add("Year",StringType(),True).add("Quarter",StringType(),True).add("ARPS",DoubleType(),True).add("Booked_seats",IntegerType(),True)
+
+df_with_airlschema = spark.read.format("csv").option("header","True").schema(airlschema).load("hdfs://nameservice1/user/bigdatalab456411/training/airlines.csv")
+
+df_with_airlschema.registerTempTable('airlines')
+
+What is the total revenue generated in each year?
+a = spark.sql("select year,((sum(arps*booked_seats))/10000000) as revenue from airlines group by year ")
+2)What is the average revenue per flight for each airline?
+a = spark.sql("select  year,arps from airlines order by arps desc limit 1")
+
+
+3)What is the total number of booked seats for each quarter in a given year?
+a=spark.sql("select year,quarter,booked_seats from airlines where year=1995")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+a = spark.sql("select year,((sum(arps*booked_seats))/10000000) as revenue from Airindia group by year ")
+
+
+
+a = spark.sql("select  year,arps from Airindia order by arps desc limit 1")
+
+a=spark.sql("select year,quarter,booked_seats from Airindia where year=1995")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+group by program 
+txnRDD = sc.textFile("hdfs://nameservice1/user/bigdatalab45644/training/txns1.txt",1)
+txnKVRDD = txnRDD.map(lambda row : (row.split(',')[5], float(row.split(',')[3])))
+amtAndcount = txnKVRDD.mapValues(lambda x : (x, 1))
+totalbyProd = amtAndcount.reduceByKey(lambda x,y : (x[0] + y[0], x[1] + y[1]))
+avgforProd = totalbyProd.mapValues(lambda x : x[0]/ x[1])for a in avgforProd.collect():
+...	print(a)
+...maxAvg = avgforProd.sortBy(lambda a : -a[1])                                                                                                                        for a in maxAvg.collect():                                                                                                                                          ...     print(a)
